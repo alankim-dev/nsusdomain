@@ -105,6 +105,17 @@
             border-color: #ef4444;
             color: #7f1d1d;
         }
+        
+        /* Tab Styles */
+        .tab-btn {
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            border-bottom-color: #4f46e5;
+            color: #4f46e5;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -130,7 +141,7 @@
                 </li>
                 <li>
                     <button onclick="navigate('business')" id="nav-business" class="nav-item w-full text-left px-6 py-4 font-medium text-gray-600 hover:bg-gray-50 flex items-center transition-colors">
-                        <i class="fa-solid fa-briefcase w-6 mr-2"></i> 3. 비즈니스와 수익
+                        <i class="fa-solid fa-scale-balanced w-6 mr-2"></i> 3. 비즈니스 & 포커 이코노미
                     </button>
                 </li>
                 <li>
@@ -212,6 +223,11 @@
                     { name: '기타 (RoW)', share: 14, status: '초기 단계', color: '#64748b', desc: '남미(브라질) 등 신흥 시장 부상.' }
                 ]
             },
+            ecology: {
+                labels: ['Fish (Recreational)', 'Regulars', 'Shark (Pro)'],
+                data: [70, 25, 5],
+                desc: "건전한 생태계를 위해 Fish의 비율을 유지하는 것이 핵심입니다."
+            },
             quiz: [
                 {
                     q: "2024년 기준 글로벌 iGaming 시장에서 약 52%의 점유율을 차지하며 시장 성장을 주도하고 있는 게임 유형은 무엇입니까?",
@@ -238,10 +254,16 @@
                     rationale: "전체(100%)에서 플레이어에게 돌아가는 몫(96%)을 뺀 나머지가 카지노의 수익(하우스 엣지)입니다."
                 },
                 {
-                    q: "iGaming 산업 구조에서 NSUSLAB과 같이 게임 소프트웨어를 직접 개발하고 서버를 운영하며 RNG의 무결성을 책임지는 기업 유형은 무엇입니까?",
-                    options: ["운영사 (Operator)", "제휴 파트너 (Affiliate)", "게임 공급사 (Game Provider)", "결제 대행사 (PSP)"],
+                    q: "포커룸은 승패에 관여하지 않고, 승자가 가져가는 팟(Pot)의 일정 비율을 수수료로 취합니다. 이 수익 모델의 이름은?",
+                    options: ["House Edge", "Rake", "Vigorish", "Margin"],
+                    correct: 1,
+                    rationale: "레이크(Rake)는 포커룸이 게임 장소를 제공하는 대가로 받는 수수료입니다. 보통 팟의 3~5% 수준입니다."
+                },
+                {
+                    q: "포커 생태계에서 'Fish'가 너무 빨리 돈을 잃고 떠나면 발생하는 현상은?",
+                    options: ["Shark들의 수익이 증가한다.", "생태계가 활성화된다.", "Shark들도 먹잇감이 없어 떠나고 생태계가 붕괴된다.", "아무 영향이 없다."],
                     correct: 2,
-                    rationale: "공급사(Provider)는 게임을 제작하고 B2B로 제공하는 역할을 합니다. (영화 제작사에 해당)"
+                    rationale: "Fish(초보자)는 생태계의 영양분입니다. 이들이 사라지면 포식자(Shark)들도 떠나게 되어 결국 포커룸이 망하게 됩니다."
                 },
                 {
                     q: "iGaming 회사의 실제 순수익을 나타내는 지표로, GGR(총 매출)에서 보너스, 세금, 수수료 등을 뺀 것은 무엇입니까?",
@@ -266,12 +288,6 @@
                     options: ["Provably Fair", "Live Dealer", "KYC", "SSL"],
                     correct: 0,
                     rationale: "Provably Fair는 암호화 기술을 통해 유저가 결과를 직접 검증할 수 있게 하여 투명성을 극대화합니다."
-                },
-                {
-                    q: "라이브 딜러 게임에서 베팅의 공정성을 보장하기 위해 필수적인 기술적 요건으로, 보통 0.5초 미만이어야 하는 것은?",
-                    options: ["4K 화질", "VR 구현", "3D 사운드", "초저지연 스트리밍 (Ultra-low Latency)"],
-                    correct: 3,
-                    rationale: "지연 시간이 길어지면 베팅 타이밍이 어긋나거나 결과를 미리 아는 문제가 발생할 수 있어 초저지연 기술이 필수입니다."
                 }
             ]
         };
@@ -279,6 +295,7 @@
         // --- State Management ---
         let currentState = {
             activeSection: 'overview',
+            businessTab: 'general', // 'general' or 'poker'
             charts: {},
             simulation: { balance: 1000, spins: 0, history: [] },
             quiz: { currentQuestion: 0, score: 0, answers: [] }
@@ -510,131 +527,175 @@
             `;
         };
 
-        // 3. Business Section
+        // 3. Business Section (UPDATED)
         const renderBusiness = () => {
+            const isPoker = currentState.businessTab === 'poker';
             return `
-                <header class="mb-10 animate-fade-in border-b border-gray-200 pb-6">
-                    <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">비즈니스와 수익 구조 (GGR vs NGR)</h1>
+                <header class="mb-8 animate-fade-in border-b border-gray-200 pb-6">
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">비즈니스 & 포커 이코노미</h1>
                     <div class="text-gray-600 text-lg leading-relaxed">
                         <p class="mb-4">
-                            iGaming 산업은 <strong>'제작(Provider)'</strong>과 <strong>'배급(Operator)'</strong>이 분리된 구조입니다.
-                            또한 개발자와 PM은 단순히 매출(GGR)이 아닌, 회사의 실제 이익인 <strong>NGR(Net Gaming Revenue)</strong>의 개념을 명확히 이해해야 합니다.
+                            NSUS 비즈니스의 핵심은 <strong>카지노의 수학(GGR/NGR)</strong>과 <strong>포커의 생태계(Rake/Ecology)</strong>를 모두 이해하는 것입니다.
                         </p>
-                        <div class="inline-block bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-bold">
-                            NSUSLAB Position: Tech Provider (B2B)
-                        </div>
+                    </div>
+                    
+                    <!-- Tabs -->
+                    <div class="flex space-x-6 mt-6">
+                        <button onclick="switchBusinessTab('general')" class="tab-btn pb-2 px-1 text-lg ${!isPoker ? 'active' : 'text-gray-500 hover:text-gray-700'}">
+                            <i class="fa-solid fa-chart-simple mr-2"></i>일반 iGaming (GGR/NGR)
+                        </button>
+                        <button onclick="switchBusinessTab('poker')" class="tab-btn pb-2 px-1 text-lg ${isPoker ? 'active' : 'text-gray-500 hover:text-gray-700'}">
+                            <i class="fa-solid fa-fish-fins mr-2"></i>포커 생태계 (Fish vs Shark)
+                        </button>
                     </div>
                 </header>
 
-                <!-- Value Chain -->
-                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 mb-10">
-                    <h3 class="text-xl font-bold text-gray-800 mb-6">iGaming 가치 사슬 (Value Chain)</h3>
-                    <div class="flex flex-col md:flex-row items-stretch justify-between gap-4">
-                        <!-- Provider -->
-                        <div class="flex-1 bg-indigo-50 border-2 border-indigo-200 p-6 rounded-xl text-center relative hover:shadow-lg transition-all transform hover:-translate-y-1">
-                            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-indigo-600 text-white text-xs px-3 py-1 rounded-full font-bold shadow-sm">We are Here</div>
-                            <i class="fa-solid fa-code text-4xl text-indigo-500 mb-4"></i>
-                            <h4 class="text-lg font-bold text-gray-900">Game Provider</h4>
-                            <p class="text-sm text-gray-600 mt-2 font-medium">NSUSLAB, Evolution</p>
-                            <p class="text-xs text-gray-500 mt-3 leading-snug">게임을 만들고 서버를 운영합니다. RNG의 무결성을 책임집니다.</p>
-                        </div>
-
-                        <div class="flex items-center justify-center text-gray-300">
-                            <i class="fa-solid fa-arrow-right text-2xl rotate-90 md:rotate-0"></i>
-                        </div>
-
-                        <!-- Operator -->
-                        <div class="flex-1 bg-white border border-gray-200 p-6 rounded-xl text-center hover:shadow-lg transition-all transform hover:-translate-y-1">
-                            <i class="fa-solid fa-store text-4xl text-amber-500 mb-4"></i>
-                            <h4 class="text-lg font-bold text-gray-900">Operator</h4>
-                            <p class="text-sm text-gray-600 mt-2 font-medium">GGPoker, Bet365</p>
-                            <p class="text-xs text-gray-500 mt-3 leading-snug">유저를 모으고, 입출금을 처리하고, 라이선스를 관리합니다.</p>
-                        </div>
-
-                        <div class="flex items-center justify-center text-gray-300">
-                            <i class="fa-solid fa-arrow-right text-2xl rotate-90 md:rotate-0"></i>
-                        </div>
-
-                        <!-- Player -->
-                        <div class="flex-1 bg-white border border-gray-200 p-6 rounded-xl text-center hover:shadow-lg transition-all transform hover:-translate-y-1">
-                            <i class="fa-solid fa-users text-4xl text-green-500 mb-4"></i>
-                            <h4 class="text-lg font-bold text-gray-900">Player</h4>
-                            <p class="text-sm text-gray-600 mt-2 font-medium">End User</p>
-                            <p class="text-xs text-gray-500 mt-3 leading-snug">게임을 즐기고 비용을 지불합니다.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- GGR vs NGR Deep Dive -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- Text Explanation (Accordion style) -->
-                    <div class="space-y-4">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">수익 지표 심층 분석</h3>
-                        
-                        <div class="border border-gray-200 rounded-lg overflow-hidden">
-                            <button onclick="toggleAccordion('acc-ggr')" class="w-full flex justify-between items-center p-4 bg-gray-50 hover:bg-gray-100 transition-colors text-left font-bold text-gray-700">
-                                <span>1. GGR (Gross Gaming Revenue)이란?</span>
-                                <i class="fa-solid fa-chevron-down text-sm"></i>
-                            </button>
-                            <div id="acc-ggr" class="accordion-content p-4 text-sm text-gray-600 bg-white border-t border-gray-200">
-                                <p class="mb-2"><strong>공식:</strong> 총 베팅액(Total Bets) - 총 당첨금(Payouts)</p>
-                                <p>가장 기초적인 매출 지표입니다. 즉, 플레이어가 잃은 돈의 총액입니다. 하지만 여기서 비용을 빼지 않았기 때문에 '순수익'이 아닙니다.</p>
-                            </div>
-                        </div>
-
-                        <div class="border border-gray-200 rounded-lg overflow-hidden">
-                            <button onclick="toggleAccordion('acc-ngr')" class="w-full flex justify-between items-center p-4 bg-gray-50 hover:bg-gray-100 transition-colors text-left font-bold text-gray-700">
-                                <span>2. NGR (Net Gaming Revenue)이란?</span>
-                                <i class="fa-solid fa-chevron-down text-sm"></i>
-                            </button>
-                            <div id="acc-ngr" class="accordion-content p-4 text-sm text-gray-600 bg-white border-t border-gray-200 open" style="max-height: 1000px; opacity: 1;">
-                                <p class="mb-2"><strong>공식:</strong> GGR - (보너스 + 세금 + 결제수수료 + 로열티)</p>
-                                <p class="mb-2">회사가 실제로 손에 쥐는 돈입니다. 매우 중요한 지표입니다.</p>
-                                <ul class="list-disc list-inside space-y-1 text-gray-500 bg-yellow-50 p-2 rounded">
-                                    <li><strong>Why Devs Care:</strong> 보너스 남용(Bonus Abuse)이나 불필요한 트랜잭션 수수료를 줄이는 기능을 개발하면 NGR이 직접적으로 상승합니다.</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="bg-indigo-50 p-5 rounded-lg border border-indigo-100 mt-4">
-                            <h4 class="font-bold text-indigo-800 mb-2">실습: NGR 계산하기</h4>
-                            <div class="space-y-3">
-                                <div>
-                                    <label class="text-xs text-gray-500 font-bold uppercase">총 베팅액</label>
-                                    <input type="number" id="calc-bets" value="1000000" class="w-full p-2 border border-indigo-200 rounded text-right font-mono" oninput="calculateNGR()">
-                                </div>
-                                <div>
-                                    <label class="text-xs text-gray-500 font-bold uppercase">보너스 지출 비용</label>
-                                    <input type="number" id="calc-bonus" value="50000" class="w-full p-2 border border-indigo-200 rounded text-right font-mono" oninput="calculateNGR()">
-                                </div>
-                                <div>
-                                    <label class="text-xs text-gray-500 font-bold uppercase">세금 및 수수료</label>
-                                    <input type="number" id="calc-tax" value="150000" class="w-full p-2 border border-indigo-200 rounded text-right font-mono" oninput="calculateNGR()">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Visualization -->
-                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex flex-col">
-                        <h4 class="text-center font-bold text-gray-700 mb-4">수익 구조 시각화 (Waterfall Chart)</h4>
-                        <div class="chart-container flex-1">
-                            <canvas id="ngrChart"></canvas>
-                        </div>
-                        <div class="mt-4 p-4 bg-gray-50 rounded-lg flex justify-between items-center">
-                            <div>
-                                <div class="text-xs text-gray-500">Gross (GGR)</div>
-                                <div id="res-ggr" class="text-lg font-bold text-gray-700">$40,000</div>
-                            </div>
-                            <div class="text-right">
-                                <div class="text-xs text-gray-500">Net (NGR)</div>
-                                <div id="res-ngr" class="text-2xl font-bold text-green-600">$10,000</div>
-                            </div>
-                        </div>
-                    </div>
+                <div id="business-content" class="animate-fade-in">
+                    ${!isPoker ? renderGeneralBusiness() : renderPokerBusiness()}
                 </div>
             `;
         };
+
+        const renderGeneralBusiness = () => `
+            <!-- Value Chain -->
+            <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 mb-10">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">iGaming 가치 사슬 (Value Chain)</h3>
+                <div class="flex flex-col md:flex-row items-stretch justify-between gap-4">
+                    <!-- Provider -->
+                    <div class="flex-1 bg-indigo-50 border-2 border-indigo-200 p-6 rounded-xl text-center relative hover:shadow-lg transition-all transform hover:-translate-y-1">
+                        <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-indigo-600 text-white text-xs px-3 py-1 rounded-full font-bold shadow-sm">We are Here</div>
+                        <i class="fa-solid fa-code text-4xl text-indigo-500 mb-4"></i>
+                        <h4 class="text-lg font-bold text-gray-900">Game Provider</h4>
+                        <p class="text-sm text-gray-600 mt-2 font-medium">NSUSLAB, Evolution</p>
+                        <p class="text-xs text-gray-500 mt-3 leading-snug">게임을 만들고 서버를 운영합니다. RNG의 무결성을 책임집니다.</p>
+                    </div>
+                    <div class="flex items-center justify-center text-gray-300"><i class="fa-solid fa-arrow-right text-2xl rotate-90 md:rotate-0"></i></div>
+                    <!-- Operator -->
+                    <div class="flex-1 bg-white border border-gray-200 p-6 rounded-xl text-center hover:shadow-lg transition-all transform hover:-translate-y-1">
+                        <i class="fa-solid fa-store text-4xl text-amber-500 mb-4"></i>
+                        <h4 class="text-lg font-bold text-gray-900">Operator</h4>
+                        <p class="text-sm text-gray-600 mt-2 font-medium">GGPoker, Bet365</p>
+                        <p class="text-xs text-gray-500 mt-3 leading-snug">유저를 모으고, 입출금을 처리하고, 라이선스를 관리합니다.</p>
+                    </div>
+                    <div class="flex items-center justify-center text-gray-300"><i class="fa-solid fa-arrow-right text-2xl rotate-90 md:rotate-0"></i></div>
+                    <!-- Player -->
+                    <div class="flex-1 bg-white border border-gray-200 p-6 rounded-xl text-center hover:shadow-lg transition-all transform hover:-translate-y-1">
+                        <i class="fa-solid fa-users text-4xl text-green-500 mb-4"></i>
+                        <h4 class="text-lg font-bold text-gray-900">Player</h4>
+                        <p class="text-sm text-gray-600 mt-2 font-medium">End User</p>
+                        <p class="text-xs text-gray-500 mt-3 leading-snug">게임을 즐기고 비용을 지불합니다.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GGR vs NGR Deep Dive -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Text Explanation -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">수익 지표 심층 분석</h3>
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <h4 class="font-bold text-gray-800 mb-2">1. GGR (Gross Gaming Revenue)</h4>
+                        <p class="text-sm text-gray-600 mb-2"><strong>공식:</strong> 총 베팅액 - 총 당첨금</p>
+                        <p class="text-xs text-gray-500">가장 기초적인 매출 지표입니다.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border-2 border-green-100">
+                        <h4 class="font-bold text-green-800 mb-2">2. NGR (Net Gaming Revenue)</h4>
+                        <p class="text-sm text-gray-600 mb-2"><strong>공식:</strong> GGR - (보너스 + 세금 + 수수료 + 로열티)</p>
+                        <p class="text-xs text-gray-500">회사가 실제로 손에 쥐는 돈입니다. 개발자는 보너스 남용을 막아 NGR을 높여야 합니다.</p>
+                    </div>
+                    <!-- Inputs -->
+                    <div class="bg-indigo-50 p-5 rounded-lg border border-indigo-100 mt-4">
+                        <h4 class="font-bold text-indigo-800 mb-2">실습: NGR 계산하기</h4>
+                        <div class="space-y-3">
+                            <div><label class="text-xs text-gray-500 font-bold uppercase">총 베팅액</label><input type="number" id="calc-bets" value="1000000" class="w-full p-2 border border-indigo-200 rounded text-right font-mono" oninput="calculateNGR()"></div>
+                            <div><label class="text-xs text-gray-500 font-bold uppercase">보너스 비용</label><input type="number" id="calc-bonus" value="50000" class="w-full p-2 border border-indigo-200 rounded text-right font-mono" oninput="calculateNGR()"></div>
+                            <div><label class="text-xs text-gray-500 font-bold uppercase">세금/수수료</label><input type="number" id="calc-tax" value="150000" class="w-full p-2 border border-indigo-200 rounded text-right font-mono" oninput="calculateNGR()"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Chart -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex flex-col">
+                    <h4 class="text-center font-bold text-gray-700 mb-4">수익 구조 (Waterfall Chart)</h4>
+                    <div class="chart-container flex-1"><canvas id="ngrChart"></canvas></div>
+                    <div class="mt-4 p-4 bg-gray-50 rounded-lg flex justify-between items-center">
+                        <div><div class="text-xs text-gray-500">Gross (GGR)</div><div id="res-ggr" class="text-lg font-bold text-gray-700">$40,000</div></div>
+                        <div class="text-right"><div class="text-xs text-gray-500">Net (NGR)</div><div id="res-ngr" class="text-2xl font-bold text-green-600">$10,000</div></div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const renderPokerBusiness = () => `
+            <!-- Rake Explanation -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-indigo-500">
+                    <div class="flex items-center mb-3"><i class="fa-solid fa-hand-holding-dollar text-2xl text-indigo-500 mr-3"></i><h3 class="text-xl font-bold text-gray-800">포커의 수익: 레이크 (Rake)</h3></div>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                        카지노는 '하우스 엣지'로 돈을 벌지만, 포커는 플레이어끼리 싸우는 게임(PVP)입니다.
+                        NSUS는 승패에 관여하지 않고, <strong>'장소 대여료'</strong> 명목으로 팟(Pot)의 일정 비율(3~5%)을 수수료로 받습니다.
+                    </p>
+                    <ul class="text-sm text-indigo-800 bg-indigo-50 p-3 rounded list-disc list-inside">
+                        <li><strong>Cap:</strong> 아무리 판돈이 커져도 떼어가는 최대 금액은 정해져 있습니다.</li>
+                        <li><strong>No Flop, No Drop:</strong> 플럽을 보기 전 게임이 끝나면 수수료를 받지 않습니다.</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center text-center">
+                    <div class="w-40 h-40 rounded-full border-4 border-slate-200 flex items-center justify-center relative mb-4">
+                        <div class="absolute inset-0 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin-slow" style="animation-duration: 3s"></div>
+                        <div>
+                            <div class="text-xs text-gray-400">Total Pot</div>
+                            <div class="text-2xl font-bold text-gray-800">$100</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 text-sm">
+                        <div class="text-green-600 font-bold"><i class="fa-solid fa-user mr-1"></i>Winner: $95</div>
+                        <div class="text-indigo-600 font-bold"><i class="fa-solid fa-house mr-1"></i>House: $5 (Rake)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ecology Section -->
+            <div class="bg-slate-800 text-white p-8 rounded-xl shadow-xl">
+                <h3 class="text-2xl font-bold mb-6 text-center"><i class="fa-solid fa-earth-americas mr-2"></i>포커 생태계의 비밀 (The Ecology)</h3>
+                
+                <div class="flex flex-col md:flex-row gap-8 items-center justify-center mb-8">
+                    <!-- Fish -->
+                    <div class="text-center w-1/3">
+                        <div class="text-5xl mb-2">🐟</div>
+                        <h4 class="font-bold text-blue-300">Fish (Recreational)</h4>
+                        <p class="text-xs text-gray-400 mt-1">재미로 게임을 즐김.<br>생태계의 영양분.</p>
+                    </div>
+                    <!-- Interaction -->
+                    <div class="text-center w-1/3 text-gray-500">
+                        <i class="fa-solid fa-arrow-right-long text-4xl hidden md:block"></i>
+                        <i class="fa-solid fa-arrow-down-long text-4xl md:hidden"></i>
+                        <div class="text-xs mt-2 text-red-400 font-bold">상어가 너무 빨리 잡아먹으면?</div>
+                    </div>
+                    <!-- Shark -->
+                    <div class="text-center w-1/3">
+                        <div class="text-5xl mb-2">🦈</div>
+                        <h4 class="font-bold text-red-300">Shark (Pro)</h4>
+                        <p class="text-xs text-gray-400 mt-1">수익을 위해 게임함.<br>생태계의 포식자.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white/10 p-6 rounded-lg backdrop-blur-sm border border-white/10">
+                    <h4 class="font-bold text-yellow-400 mb-2"><i class="fa-solid fa-triangle-exclamation mr-2"></i>생태계 붕괴 시나리오</h4>
+                    <p class="text-sm text-gray-300 mb-4">
+                        Shark가 Fish의 돈을 너무 빨리 따버리면(Bust), Fish는 흥미를 잃고 떠납니다. 
+                        먹이가 사라진 Shark도 떠납니다. 결국 포커룸은 망하게 됩니다.
+                    </p>
+                    <div class="border-t border-white/20 pt-4">
+                        <h4 class="font-bold text-green-400 mb-2"><i class="fa-solid fa-shield-halved mr-2"></i>NSUS의 솔루션 (Ecology Management)</h4>
+                        <ul class="text-sm text-gray-300 space-y-2">
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i><strong>PVI (Player Value Index):</strong> 생태계에 도움이 되는 유저(Fish)에게 더 많은 혜택을 줍니다.</li>
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i><strong>레이크백 (Rakeback):</strong> 유저가 낸 수수료 일부를 돌려주어 게임 수명을 연장시킵니다.</li>
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i><strong>GTO 방지:</strong> AI 도움(RTA)을 받는 부정 행위자를 차단하여 공정성을 지킵니다.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        `;
 
         // 4. Regulation Section
         const renderRegulation = () => {
@@ -644,7 +705,7 @@
                     <div class="text-gray-600 text-lg leading-relaxed">
                         <p>
                             iGaming은 '신뢰(Trust)'를 파는 산업입니다. 
-                            적법한 라이선스(MGA, UKGC)가 없다면 운영이 불가능하고, 유저들도 사이트를 신뢰하지 않습니다.
+                            적법한 라이선스(MGA, UKGC)가 없다면 정상적인 운영이 불가능하고, 유저들도 사이트를 신뢰하지 않습니다.
                         </p>
                     </div>
                 </header>
@@ -891,7 +952,7 @@
             `;
         };
 
-        // 7. Quiz Section (New)
+        // 7. Quiz Section
         const renderQuiz = () => {
             const currentQ = reportData.quiz[currentState.quiz.currentQuestion];
             const isFinished = currentState.quiz.currentQuestion >= reportData.quiz.length;
@@ -972,6 +1033,11 @@
             }
         }
 
+        function switchBusinessTab(tab) {
+            currentState.businessTab = tab;
+            navigate('business');
+        }
+
         function navigate(sectionId) {
             currentState.activeSection = sectionId;
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -987,7 +1053,7 @@
             switch(sectionId) {
                 case 'overview': contentArea.innerHTML = renderOverview(); initOverviewCharts(); break;
                 case 'tech': contentArea.innerHTML = renderTech(); initTechCharts(); break;
-                case 'business': contentArea.innerHTML = renderBusiness(); calculateNGR(); break;
+                case 'business': contentArea.innerHTML = renderBusiness(); if(currentState.businessTab === 'general') calculateNGR(); break;
                 case 'regulation': contentArea.innerHTML = renderRegulation(); break;
                 case 'rg': contentArea.innerHTML = renderRG(); initRGChart(); break;
                 case 'future': contentArea.innerHTML = renderFuture(); break;
@@ -1128,7 +1194,7 @@
             // Simulation Parameters
             const betSize = 10;
             const rtp = 0.96; 
-            const hitFreq = 0.30; // 30% chance to win something (Medium Volatility)
+            const hitFreq = 0.30; 
             
             // Reset message if visible
             document.getElementById('sim-message').classList.add('hidden');
@@ -1147,15 +1213,12 @@
                 
                 // RNG Logic with Volatility
                 if(Math.random() < hitFreq) { 
-                    // To maintain 96% RTP with 30% hit freq, avg win must be ~3.2x bet
-                    // We use a randomized multiplier to simulate volatility
-                    // Some small wins (0.5x), some big wins (10x)
                     const rand = Math.random();
                     let winMult = 0;
 
-                    if (rand < 0.6) winMult = 0.5 + Math.random(); // Small win (0.5x - 1.5x)
-                    else if (rand < 0.9) winMult = 2 + Math.random() * 3; // Medium win (2x - 5x)
-                    else winMult = 5 + Math.random() * 10; // Big win (5x - 15x)
+                    if (rand < 0.6) winMult = 0.5 + Math.random(); 
+                    else if (rand < 0.9) winMult = 2 + Math.random() * 3; 
+                    else winMult = 5 + Math.random() * 10; 
                     
                     balance += (betSize * winMult); 
                 }
@@ -1180,7 +1243,6 @@
             document.getElementById('sim-balance').innerText = `$${Math.floor(balance).toLocaleString()}`;
             document.getElementById('sim-spins').innerText = currentState.simulation.spins.toLocaleString();
             
-            // Calculate actual RTP for this session
             const totalBet = currentState.simulation.spins * betSize;
             const totalWon = balance - 1000 + totalBet;
             const currentRtp = totalBet > 0 ? ((totalWon / totalBet) * 100).toFixed(1) : 0;
@@ -1204,7 +1266,7 @@
             const bonus = parseFloat(document.getElementById('calc-bonus').value) || 0;
             const tax = parseFloat(document.getElementById('calc-tax').value) || 0;
 
-            const payouts = bets * 0.96; // 96% RTP Fixed
+            const payouts = bets * 0.96; 
             const ggr = bets - payouts;
             const ngr = ggr - bonus - tax;
 
@@ -1250,7 +1312,7 @@
                     datasets: [
                         {
                             label: 'Protected User (RG Tool 사용)',
-                            data: [100, 280, 500, 950, 1800], // 꾸준히 상승
+                            data: [100, 280, 500, 950, 1800], 
                             borderColor: '#4f46e5',
                             backgroundColor: 'rgba(79, 70, 229, 0.1)',
                             fill: true,
@@ -1258,7 +1320,7 @@
                         },
                         {
                             label: 'Burnout User (보호 없음)',
-                            data: [150, 200, 210, 210, 210], // 초반 높으나 이탈
+                            data: [150, 200, 210, 210, 210], 
                             borderColor: '#ef4444',
                             borderDash: [5, 5],
                             tension: 0.3
