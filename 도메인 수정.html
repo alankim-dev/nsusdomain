@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iGaming 산업 도메인 지식 보고서 | NSUSLAB Insight</title>
+    
+    <!-- CSS Framework: Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Graphics: FontAwesome for Icons (No SVG Graphics) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Visualization: Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Chosen Palette: Warm Professional */
+        /* Background: Warm Neutral (#f8fafc) */
+        /* Primary Text: Dark Slate (#1e293b) */
+        /* Accents: Indigo (#4f46e5), Amber (#d97706) for highlights */
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        /* Chart Container Styling - MANDATORY Requirement */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px; /* Constraints width for readability */
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px; /* Increased height for better visibility */
+            max-height: 450px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .nav-item.active {
+            background-color: #e0e7ff;
+            color: #4f46e5;
+            border-right: 4px solid #4f46e5;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Accordion Style */
+        .accordion-content {
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .accordion-content.open {
+            max-height: 1000px;
+            opacity: 1;
+        }
+
+        /* Quiz Styles */
+        .quiz-option {
+            transition: all 0.2s;
+        }
+        .quiz-option:hover:not(:disabled) {
+            background-color: #f3f4f6;
+            border-color: #4f46e5;
+        }
+        .quiz-option.correct {
+            background-color: #dcfce7;
+            border-color: #22c55e;
+            color: #14532d;
+        }
+        .quiz-option.wrong {
+            background-color: #fee2e2;
+            border-color: #ef4444;
+            color: #7f1d1d;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <!-- Sidebar Navigation -->
+    <nav class="w-72 bg-white border-r border-gray-200 flex-shrink-0 flex flex-col hidden md:flex z-20 shadow-lg">
+        <div class="p-6 border-b border-gray-100 flex items-center justify-center bg-indigo-50">
+            <div class="text-xl font-bold text-indigo-700 tracking-tight">
+                <i class="fa-solid fa-gamepad mr-2"></i>iGaming Insight
+            </div>
+        </div>
+        <div class="flex-1 overflow-y-auto py-4">
+            <ul class="space-y-1">
+                <li>
+                    <button onclick="navigate('overview')" id="nav-overview" class="nav-item w-full text-left px-6 py-4 font-medium text-gray-600 hover:bg-gray-50 flex items-center transition-colors">
+                        <i class="fa-solid fa-chart-line w-6 mr-2"></i> 1. 산업 개요 및 시장
+                    </button>
+                </li>
+                <li>
+                    <button onclick="navigate('tech')" id="nav-tech" class="nav-item w-full text-left px-6 py-4 font-medium text-gray-600 hover:bg-gray-50 flex items-center transition-colors">
+                        <i class="fa-solid fa-microchip w-6 mr-2"></i> 2. 기술과 수학 (RNG)
+                    </button>
+                </li>
+                <li>
+                    <button onclick="navigate('business')" id="nav-business" class="nav-item w-full text-left px-6 py-4 font-medium text-gray-600 hover:bg-gray-50 flex items-center transition-colors">
+                        <i class="fa-solid fa-briefcase w-6 mr-2"></i> 3. 비즈니스와 수익
+                    </button>
+                </li>
+                <li>
+                    <button onclick="navigate('regulation')" id="nav-regulation" class="nav-item w-full text-left px-6 py-4 font-medium text-gray-600 hover:bg-gray-50 flex items-center transition-colors">
+                        <i class="fa-solid fa-gavel w-6 mr-2"></i> 4. 글로벌 규제
+                    </button>
+                </li>
+                <li>
+                    <button onclick="navigate('rg')" id="nav-rg" class="nav-item w-full text-left px-6 py-4 font-medium text-gray-600 hover:bg-gray-50 flex items-center transition-colors">
+                        <i class="fa-solid fa-hand-holding-heart w-6 mr-2"></i> 5. 책임감 있는 게임 (RG)
+                    </button>
+                </li>
+                <li>
+                    <button onclick="navigate('future')" id="nav-future" class="nav-item w-full text-left px-6 py-4 font-medium text-gray-600 hover:bg-gray-50 flex items-center transition-colors">
+                        <i class="fa-solid fa-robot w-6 mr-2"></i> 6. 미래 트렌드
+                    </button>
+                </li>
+                <li class="border-t border-gray-100 mt-2 pt-2">
+                    <button onclick="navigate('quiz')" id="nav-quiz" class="nav-item w-full text-left px-6 py-4 font-bold text-indigo-600 hover:bg-indigo-50 flex items-center transition-colors">
+                        <i class="fa-solid fa-clipboard-question w-6 mr-2"></i> 7. 종합 퀴즈 (Master Quiz)
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <div class="p-5 border-t border-gray-100 bg-gray-50">
+            <div class="text-xs text-gray-500 mb-1">Prepared for:</div>
+            <div class="font-bold text-indigo-900">NSUSLAB KOREA</div>
+            <div class="text-xs text-gray-500 mt-1"><i class="fa-solid fa-user-graduate mr-1"></i>New Hire Onboarding</div>
+        </div>
+    </nav>
+
+    <!-- Mobile Header -->
+    <div class="md:hidden fixed top-0 w-full bg-white z-30 border-b border-gray-200 px-4 py-3 flex justify-between items-center shadow-sm">
+        <div class="font-bold text-indigo-700"><i class="fa-solid fa-gamepad mr-2"></i>iGaming Insight</div>
+        <button onclick="toggleMobileMenu()" class="text-gray-600"><i class="fa-solid fa-bars text-xl"></i></button>
+    </div>
+    
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-gray-800 bg-opacity-75 z-40 hidden" onclick="toggleMobileMenu()">
+        <div class="bg-white w-64 h-full shadow-xl flex flex-col" onclick="event.stopPropagation()">
+            <!-- Mobile nav items will be injected here via JS -->
+            <div class="p-4 border-b">
+                <span class="font-bold text-lg">메뉴</span>
+                <button onclick="toggleMobileMenu()" class="float-right text-gray-500"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div id="mobile-nav-list" class="flex-col p-2 space-y-2"></div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto bg-slate-50 relative pt-14 md:pt-0" id="main-content">
+        <div class="max-w-6xl mx-auto p-6 md:p-10 space-y-10">
+            
+            <!-- Dynamic Content Injection Point -->
+            <div id="content-area"></div>
+
+        </div>
+    </main>
+
+    <!-- Data Storage & Logic -->
+    <script>
+        // --- Data Store ---
+        const reportData = {
+            market: {
+                growth: {
+                    labels: ['2023', '2024 (Est)', '2025 (Proj)', '2030 (Proj)'],
+                    data: [700, 970, 1055, 1536], 
+                    source: "다양한 시장 조사 기관 (Grand View Research, Mordor Intelligence 등)"
+                },
+                verticals: {
+                    labels: ['스포츠 베팅', '온라인 카지노', '포커 및 기타'],
+                    data: [52.5, 30.2, 17.3],
+                    desc: "스포츠 베팅이 시장의 과반을 차지하며, 모바일 플랫폼이 성장을 주도함."
+                },
+                regions: [
+                    { name: '유럽 (Europe)', share: 41, status: '성숙 & 규제됨', color: '#4f46e5', desc: '가장 큰 시장, MGA/UKGC 등 확립된 규제.' },
+                    { name: '북미 (North America)', share: 25, status: '급성장 중', color: '#10b981', desc: '미국 주별 합법화 확산 (NJ, PA 등).' },
+                    { name: '아시아 (APAC)', share: 20, status: '복잡함/회색시장', color: '#f59e0b', desc: '잠재력은 크나 규제 장벽 높음 (오프쇼어 시장).' },
+                    { name: '기타 (RoW)', share: 14, status: '초기 단계', color: '#64748b', desc: '남미(브라질) 등 신흥 시장 부상.' }
+                ]
+            },
+            quiz: [
+                {
+                    q: "2024년 기준 글로벌 iGaming 시장에서 약 52%의 점유율을 차지하며 시장 성장을 주도하고 있는 게임 유형은 무엇입니까?",
+                    options: ["스포츠 베팅 (Sports Betting)", "온라인 슬롯 (Online Slots)", "포커 (Poker)", "판타지 스포츠"],
+                    correct: 0,
+                    rationale: "실제 스포츠 경기 결과에 베팅하는 스포츠 베팅은 전 세계적으로 가장 큰 시장 점유율을 차지하고 있습니다."
+                },
+                {
+                    q: "다음 중 게임의 결과가 '운(Chance)'보다는 플레이어의 '기술(Skill)'과 전략에 의해 크게 좌우되는 게임은 무엇입니까?",
+                    options: ["슬롯머신", "룰렛", "텍사스 홀덤 포커", "바카라"],
+                    correct: 2,
+                    rationale: "포커는 플레이어 간의 대결(PVP)이며, 확률 계산과 심리전 등 기술적 요소가 장기적인 승패를 결정합니다. 이는 NSUS(GGPoker)의 핵심 영역입니다."
+                },
+                {
+                    q: "온라인 카지노 게임의 공정성을 보장하는 핵심 기술인 RNG(난수 생성기)의 가장 중요한 특징은 무엇입니까?",
+                    options: ["패턴 반복", "독립 시행 (Independent Events)", "베팅 금액에 따른 조정", "운영자의 개입"],
+                    correct: 1,
+                    rationale: "RNG의 핵심은 이전 결과가 다음 결과에 전혀 영향을 주지 않는다는 예측 불가능성(독립 시행)입니다."
+                },
+                {
+                    q: "어떤 슬롯 게임의 RTP(환수율)가 96%라고 할 때, 이 게임의 '하우스 엣지(House Edge)'는 몇 %입니까?",
+                    options: ["96%", "0%", "50%", "4%"],
+                    correct: 3,
+                    rationale: "전체(100%)에서 플레이어에게 돌아가는 몫(96%)을 뺀 나머지가 카지노의 수익(하우스 엣지)입니다."
+                },
+                {
+                    q: "iGaming 산업 구조에서 NSUSLAB과 같이 게임 소프트웨어를 직접 개발하고 서버를 운영하며 RNG의 무결성을 책임지는 기업 유형은 무엇입니까?",
+                    options: ["운영사 (Operator)", "제휴 파트너 (Affiliate)", "게임 공급사 (Game Provider)", "결제 대행사 (PSP)"],
+                    correct: 2,
+                    rationale: "공급사(Provider)는 게임을 제작하고 B2B로 제공하는 역할을 합니다. (영화 제작사에 해당)"
+                },
+                {
+                    q: "iGaming 회사의 실제 순수익을 나타내는 지표로, GGR(총 매출)에서 보너스, 세금, 수수료 등을 뺀 것은 무엇입니까?",
+                    options: ["GGR", "CPA", "NGR (Net Gaming Revenue)", "RTP"],
+                    correct: 2,
+                    rationale: "NGR은 모든 비용을 공제하고 회사가 실제로 손에 쥐는 순수익을 의미합니다."
+                },
+                {
+                    q: "다음 중 소비자 보호 규정이 가장 엄격하여 전 세계적으로 '골드 스탠다드'로 여겨지는 라이선스 발급 기관은 어디입니까?",
+                    options: ["Curacao", "UKGC (영국 도박 위원회)", "PAGCOR", "GLI"],
+                    correct: 1,
+                    rationale: "UKGC는 세계에서 가장 까다롭고 엄격한 규제를 적용하여 최고의 신뢰도를 보장합니다."
+                },
+                {
+                    q: "책임감 있는 게임(Responsible Gaming)을 위해 AI 기술이 주로 활용되는 방식은 무엇입니까?",
+                    options: ["그래픽 개선", "승률 조작", "분노 베팅 등 이상 징후 감지", "모든 유저에게 동일 광고 발송"],
+                    correct: 2,
+                    rationale: "AI는 유저의 평소 패턴과 다른 이상 징후(과도한 베팅 등)를 감지하여 유저를 보호하는 데 사용됩니다."
+                },
+                {
+                    q: "중앙 서버의 신뢰에 의존하지 않고, 블록체인 기술을 이용해 플레이어가 직접 게임 결과의 공정성을 해시값으로 검증할 수 있는 시스템은?",
+                    options: ["Provably Fair", "Live Dealer", "KYC", "SSL"],
+                    correct: 0,
+                    rationale: "Provably Fair는 암호화 기술을 통해 유저가 결과를 직접 검증할 수 있게 하여 투명성을 극대화합니다."
+                },
+                {
+                    q: "라이브 딜러 게임에서 베팅의 공정성을 보장하기 위해 필수적인 기술적 요건으로, 보통 0.5초 미만이어야 하는 것은?",
+                    options: ["4K 화질", "VR 구현", "3D 사운드", "초저지연 스트리밍 (Ultra-low Latency)"],
+                    correct: 3,
+                    rationale: "지연 시간이 길어지면 베팅 타이밍이 어긋나거나 결과를 미리 아는 문제가 발생할 수 있어 초저지연 기술이 필수입니다."
+                }
+            ]
+        };
+
+        // --- State Management ---
+        let currentState = {
+            activeSection: 'overview',
+            charts: {},
+            simulation: { balance: 1000, spins: 0, history: [] },
+            quiz: { currentQuestion: 0, score: 0, answers: [] }
+        };
+
+        // --- Components (HTML Generators) ---
+
+        // 1. Overview Section
+        const renderOverview = () => {
+            return `
+                <header class="mb-10 animate-fade-in border-b border-gray-200 pb-6">
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">iGaming 산업 개요: 정의와 규모</h1>
+                    <div class="text-gray-600 text-lg leading-relaxed space-y-2">
+                        <p>
+                            <strong>iGaming</strong>은 인터넷을 통해 결과에 돈이나 가치를 거는 모든 형태의 온라인 베팅을 의미합니다.
+                            이 산업은 단순한 엔터테인먼트를 넘어, 고도화된 IT 기술(AI, Blockchain)과 복잡한 금융 규제(Fintech)가 얽힌 거대한 글로벌 마켓입니다.
+                        </p>
+                        <p class="text-sm bg-indigo-50 p-3 rounded-lg border-l-4 border-indigo-500 text-indigo-800">
+                            <i class="fa-solid fa-lightbulb mr-2"></i> <strong>NSUSLAB Insight:</strong> 
+                            우리는 이 거대한 시장에서 '포커(Poker)'라는 독자적인 생태계와 '카지노 플랫폼(Casino Platform)' 기술을 공급하는 핵심 플레이어입니다.
+                        </p>
+                    </div>
+                </header>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+                    <!-- Market Growth Chart -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 card-hover">
+                        <h3 class="text-xl font-bold text-gray-700 mb-2">글로벌 시장 성장 추이</h3>
+                        <p class="text-sm text-gray-500 mb-6">단위: 억 달러 (USD Billion)</p>
+                        <div class="chart-container">
+                            <canvas id="growthChart"></canvas>
+                        </div>
+                        <div class="mt-4 p-3 bg-green-50 rounded-lg text-sm text-green-800 flex items-start">
+                            <i class="fa-solid fa-arrow-trend-up mt-1 mr-2"></i>
+                            <div>
+                                <span class="font-bold">지속적인 성장:</span> 2030년까지 연평균 10% 이상의 고성장이 예상됩니다. 모바일 기기 보급과 규제 완화가 주된 동력입니다.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vertical Segmentation -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 card-hover">
+                        <h3 class="text-xl font-bold text-gray-700 mb-2">게임 유형별 시장 점유율</h3>
+                        <p class="text-sm text-gray-500 mb-6">2024년 기준 추정치</p>
+                        <div class="chart-container">
+                            <canvas id="verticalChart"></canvas>
+                        </div>
+                        <div class="mt-4 grid grid-cols-1 gap-2 text-sm text-gray-600">
+                            <div class="flex justify-between items-center p-2 bg-indigo-50 rounded">
+                                <span class="font-bold text-indigo-700">⚽ 스포츠 베팅 (52.5%)</span>
+                                <span>실제 경기 결과 예측. 시장의 과반 차지.</span>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-amber-50 rounded">
+                                <span class="font-bold text-amber-700">🎰 온라인 카지노 (30.2%)</span>
+                                <span>슬롯, 룰렛 등 RNG 기반 게임.</span>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-slate-100 rounded">
+                                <span class="font-bold text-slate-700">🃏 포커 & 기타 (17.3%)</span>
+                                <span>NSUS의 주력 분야. PVP 스킬 게임.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skill vs Chance Insight Block -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">게임의 본질: Skill vs Chance</h3>
+                    <p class="text-gray-600 mb-6">
+                        iGaming은 결과가 무엇에 의해 결정되는지에 따라 크게 두 가지로 나뉩니다. 
+                        이는 <span class="text-indigo-600 font-bold">규제 적용</span>과 <span class="text-indigo-600 font-bold">타겟 유저층</span>을 결정하는 가장 중요한 기준입니다.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Pure Chance (Updated for NSUS GGVegas) -->
+                        <div class="bg-amber-50 p-6 rounded-lg border-2 border-amber-200 relative transform hover:scale-105 transition-transform shadow-md">
+                            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-amber-600 text-white text-xs px-3 py-1 rounded-full uppercase font-bold tracking-wide shadow-sm">NSUS (GGVegas)</div>
+                            <div class="text-4xl mb-4">🎰</div>
+                            <h4 class="text-xl font-bold text-amber-900 mb-2">순수 우연 (Pure Chance)</h4>
+                            <p class="text-sm text-amber-700 mb-4">슬롯머신, 룰렛, 바카라</p>
+                            <ul class="text-sm text-amber-800 space-y-2 list-disc list-inside">
+                                <li><strong>결정 요인:</strong> 100% RNG (운)</li>
+                                <li><strong>전략:</strong> 불가능함</li>
+                                <li><strong>수익 모델:</strong> 하우스 엣지 (House Edge)</li>
+                            </ul>
+                        </div>
+
+                        <!-- Skill Based (Updated Label) -->
+                        <div class="bg-indigo-50 p-6 rounded-lg border-2 border-indigo-200 relative transform hover:scale-105 transition-transform shadow-md">
+                            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-indigo-600 text-white text-xs px-3 py-1 rounded-full uppercase font-bold tracking-wide shadow-sm">NSUS (GGPoker)</div>
+                            <div class="text-4xl mb-4">🃏</div>
+                            <h4 class="text-xl font-bold text-indigo-900 mb-2">기술 개입 (Skill Based)</h4>
+                            <p class="text-sm text-indigo-600 mb-4">텍사스 홀덤 포커</p>
+                            <ul class="text-sm text-indigo-800 space-y-2 list-disc list-inside">
+                                <li><strong>결정 요인:</strong> 운 + 실력(심리, 확률 계산)</li>
+                                <li><strong>구조:</strong> Player vs Player (PVP)</li>
+                                <li><strong>수익 모델:</strong> 레이크 (Rake, 수수료)</li>
+                            </ul>
+                        </div>
+
+                        <!-- Mixed -->
+                        <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 hover:border-gray-400 transition-colors">
+                            <div class="text-4xl mb-4">⚽</div>
+                            <h4 class="text-xl font-bold text-gray-800 mb-2">혼합 (Mixed)</h4>
+                            <p class="text-sm text-gray-500 mb-4">스포츠 베팅, 블랙잭</p>
+                            <ul class="text-sm text-gray-600 space-y-2 list-disc list-inside">
+                                <li><strong>결정 요인:</strong> 분석력 + 운</li>
+                                <li><strong>특징:</strong> 정보 분석이 승률을 높임</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        // 2. Tech Section
+        const renderTech = () => {
+            return `
+                <header class="mb-10 animate-fade-in border-b border-gray-200 pb-6">
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">기술 및 수학적 원리 (RNG & Edge)</h1>
+                    <div class="text-gray-600 text-lg leading-relaxed">
+                        <p class="mb-2">
+                            디지털 카지노 게임의 신뢰성은 <strong>RNG(난수 생성기)</strong>라는 기술적 심장과, 
+                            <strong>RTP(환수율)</strong>라는 수학적 뇌에 의해 작동합니다.
+                        </p>
+                        <p>
+                            NSUSLAB과 같은 공급사(Provider)는 이 기술이 
+                            <span class="text-indigo-600 font-bold">"조작되지 않았음(Integrity)"</span>을 증명해야 합니다.
+                        </p>
+                    </div>
+                </header>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+                    <!-- Concept Cards -->
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500">
+                            <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fa-solid fa-dice text-blue-500 mr-2"></i>RNG (난수 생성기)</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-3">
+                                예측 불가능한 결과를 생성하는 알고리즘입니다. 핵심 원칙은 <strong>'독립 시행'</strong>입니다. 
+                                이전 판에 잭팟이 터졌다고 해서, 이번 판에 안 터질 확률이 높아지는 것이 아닙니다. 동전 던지기와 같습니다.
+                            </p>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-500">
+                            <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fa-solid fa-chart-pie text-green-500 mr-2"></i>RTP (환수율)</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-3">
+                                <strong>Return To Player.</strong> 장기적으로 플레이어에게 돌아가는 판돈의 비율입니다. (예: 96%)
+                            </p>
+                            <p class="text-xs text-gray-400">나머지 4%는 하우스 엣지(운영사 수익)입니다.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-amber-500">
+                            <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fa-solid fa-bolt text-amber-500 mr-2"></i>변동성 (Volatility)</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-3">
+                                게임의 '맛'입니다. 하이 리스크 하이 리턴(고변동성)이냐, 잔잔하게 오래 즐기느냐(저변동성)의 차이입니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Simulation -->
+                    <div class="lg:col-span-2 bg-white p-8 rounded-xl shadow-lg border border-indigo-100">
+                        <div class="flex justify-between items-end mb-6">
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-800 flex items-center">
+                                    🎰 RNG & 변동성 시뮬레이터
+                                </h3>
+                                <p class="text-sm text-gray-500 mt-1">
+                                    단기적으로는 플레이어가 이길 수 있지만(변동성), 장기적으로는 수학적 확률(하우스 엣지)에 수렴합니다.
+                                </p>
+                            </div>
+                            <div class="text-right">
+                                <span class="inline-block px-3 py-1 bg-gray-100 text-gray-600 rounded text-xs font-bold mb-1">설정값</span>
+                                <div class="text-xs text-gray-500">RTP: 96% | 변동성: Medium</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chart Area -->
+                        <div class="relative bg-slate-50 rounded-lg border border-slate-200 p-2 mb-6">
+                            <div class="chart-container h-80">
+                                <canvas id="simChart"></canvas>
+                            </div>
+                            <!-- Overlay Message for Game Over -->
+                            <div id="sim-message" class="absolute inset-0 flex items-center justify-center bg-black/50 rounded-lg hidden">
+                                <div class="bg-white p-6 rounded-xl shadow-2xl text-center animate-bounce-in">
+                                    <div class="text-3xl mb-2">💸</div>
+                                    <h4 class="text-xl font-bold text-gray-800">잔액 소진 (Game Over)</h4>
+                                    <p class="text-sm text-gray-500 mb-4">이것이 하우스 엣지의 장기적인 결과입니다.</p>
+                                    <button onclick="resetSimulation()" class="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-700">다시 시작</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Stats Dashboard -->
+                        <div class="grid grid-cols-3 gap-4 mb-6">
+                            <div class="bg-indigo-50 p-4 rounded-lg text-center border border-indigo-100">
+                                <div class="text-xs text-indigo-500 font-bold uppercase tracking-wider mb-1">현재 잔액</div>
+                                <div id="sim-balance" class="text-2xl font-mono font-bold text-indigo-700">$1,000</div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
+                                <div class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">스핀 횟수</div>
+                                <div id="sim-spins" class="text-2xl font-mono font-bold text-gray-700">0</div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
+                                <div class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">현재 수익률 (RTP)</div>
+                                <div id="sim-rtp" class="text-2xl font-mono font-bold text-gray-700">0%</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Controls -->
+                        <div class="flex gap-3">
+                            <button onclick="runSimulation(1)" class="flex-1 bg-white border-2 border-indigo-600 text-indigo-600 py-3 rounded-lg font-bold hover:bg-indigo-50 transition active:scale-95">
+                                1회 스핀 (수동)
+                            </button>
+                            <button onclick="runSimulation(50)" class="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 shadow-md transition active:scale-95 flex justify-center items-center">
+                                <i class="fa-solid fa-forward mr-2"></i> 50회 자동 스핀
+                            </button>
+                            <button onclick="resetSimulation()" class="px-5 border border-gray-300 text-gray-500 rounded-lg hover:bg-gray-100" title="초기화">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="mt-4 p-3 bg-yellow-50 text-yellow-800 text-xs rounded border border-yellow-200 flex items-start">
+                            <i class="fa-solid fa-circle-info mt-0.5 mr-2"></i>
+                            <p>
+                                <strong>Insight:</strong> 그래프가 일직선으로 떨어지지 않고 오르락내리락하는 것을 <strong>'분산(Variance)'</strong>이라고 합니다. 
+                                이 구간에서 플레이어는 돈을 따는 즐거움을 느끼지만, 시행 횟수가 많아질수록 잔액은 결국 0(하우스 엣지)을 향해 갑니다.
+                                우리는 이 과정(Entertainment)을 파는 회사입니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        // 3. Business Section
+        const renderBusiness = () => {
+            return `
+                <header class="mb-10 animate-fade-in border-b border-gray-200 pb-6">
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">비즈니스와 수익 구조 (GGR vs NGR)</h1>
+                    <div class="text-gray-600 text-lg leading-relaxed">
+                        <p class="mb-4">
+                            iGaming 산업은 <strong>'제작(Provider)'</strong>과 <strong>'배급(Operator)'</strong>이 분리된 구조입니다.
+                            또한 개발자와 PM은 단순히 매출(GGR)이 아닌, 회사의 실제 이익인 <strong>NGR(Net Gaming Revenue)</strong>의 개념을 명확히 이해해야 합니다.
+                        </p>
+                        <div class="inline-block bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-bold">
+                            NSUSLAB Position: Tech Provider (B2B)
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Value Chain -->
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 mb-10">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6">iGaming 가치 사슬 (Value Chain)</h3>
+                    <div class="flex flex-col md:flex-row items-stretch justify-between gap-4">
+                        <!-- Provider -->
+                        <div class="flex-1 bg-indigo-50 border-2 border-indigo-200 p-6 rounded-xl text-center relative hover:shadow-lg transition-all transform hover:-translate-y-1">
+                            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-indigo-600 text-white text-xs px-3 py-1 rounded-full font-bold shadow-sm">We are Here</div>
+                            <i class="fa-solid fa-code text-4xl text-indigo-500 mb-4"></i>
+                            <h4 class="text-lg font-bold text-gray-900">Game Provider</h4>
+                            <p class="text-sm text-gray-600 mt-2 font-medium">NSUSLAB, Evolution</p>
+                            <p class="text-xs text-gray-500 mt-3 leading-snug">게임을 만들고 서버를 운영합니다. RNG의 무결성을 책임집니다.</p>
+                        </div>
+
+                        <div class="flex items-center justify-center text-gray-300">
+                            <i class="fa-solid fa-arrow-right text-2xl rotate-90 md:rotate-0"></i>
+                        </div>
+
+                        <!-- Operator -->
+                        <div class="flex-1 bg-white border border-gray-200 p-6 rounded-xl text-center hover:shadow-lg transition-all transform hover:-translate-y-1">
+                            <i class="fa-solid fa-store text-4xl text-amber-500 mb-4"></i>
+                            <h4 class="text-lg font-bold text-gray-900">Operator</h4>
+                            <p class="text-sm text-gray-600 mt-2 font-medium">GGPoker, Bet365</p>
+                            <p class="text-xs text-gray-500 mt-3 leading-snug">유저를 모으고, 입출금을 처리하고, 라이선스를 관리합니다.</p>
+                        </div>
+
+                        <div class="flex items-center justify-center text-gray-300">
+                            <i class="fa-solid fa-arrow-right text-2xl rotate-90 md:rotate-0"></i>
+                        </div>
+
+                        <!-- Player -->
+                        <div class="flex-1 bg-white border border-gray-200 p-6 rounded-xl text-center hover:shadow-lg transition-all transform hover:-translate-y-1">
+                            <i class="fa-solid fa-users text-4xl text-green-500 mb-4"></i>
+                            <h4 class="text-lg font-bold text-gray-900">Player</h4>
+                            <p class="text-sm text-gray-600 mt-2 font-medium">End User</p>
+                            <p class="text-xs text-gray-500 mt-3 leading-snug">게임을 즐기고 비용을 지불합니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GGR vs NGR Deep Dive -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Text Explanation (Accordion style) -->
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">수익 지표 심층 분석</h3>
+                        
+                        <div class="border border-gray-200 rounded-lg overflow-hidden">
+                            <button onclick="toggleAccordion('acc-ggr')" class="w-full flex justify-between items-center p-4 bg-gray-50 hover:bg-gray-100 transition-colors text-left font-bold text-gray-700">
+                                <span>1. GGR (Gross Gaming Revenue)이란?</span>
+                                <i class="fa-solid fa-chevron-down text-sm"></i>
+                            </button>
+                            <div id="acc-ggr" class="accordion-content p-4 text-sm text-gray-600 bg-white border-t border-gray-200">
+                                <p class="mb-2"><strong>공식:</strong> 총 베팅액(Total Bets) - 총 당첨금(Payouts)</p>
+                                <p>가장 기초적인 매출 지표입니다. 즉, 플레이어가 잃은 돈의 총액입니다. 하지만 여기서 비용을 빼지 않았기 때문에 '순수익'이 아닙니다.</p>
+                            </div>
+                        </div>
+
+                        <div class="border border-gray-200 rounded-lg overflow-hidden">
+                            <button onclick="toggleAccordion('acc-ngr')" class="w-full flex justify-between items-center p-4 bg-gray-50 hover:bg-gray-100 transition-colors text-left font-bold text-gray-700">
+                                <span>2. NGR (Net Gaming Revenue)이란?</span>
+                                <i class="fa-solid fa-chevron-down text-sm"></i>
+                            </button>
+                            <div id="acc-ngr" class="accordion-content p-4 text-sm text-gray-600 bg-white border-t border-gray-200 open" style="max-height: 1000px; opacity: 1;">
+                                <p class="mb-2"><strong>공식:</strong> GGR - (보너스 + 세금 + 결제수수료 + 로열티)</p>
+                                <p class="mb-2">회사가 실제로 손에 쥐는 돈입니다. 매우 중요한 지표입니다.</p>
+                                <ul class="list-disc list-inside space-y-1 text-gray-500 bg-yellow-50 p-2 rounded">
+                                    <li><strong>Why Devs Care:</strong> 보너스 남용(Bonus Abuse)이나 불필요한 트랜잭션 수수료를 줄이는 기능을 개발하면 NGR이 직접적으로 상승합니다.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="bg-indigo-50 p-5 rounded-lg border border-indigo-100 mt-4">
+                            <h4 class="font-bold text-indigo-800 mb-2">실습: NGR 계산하기</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="text-xs text-gray-500 font-bold uppercase">총 베팅액</label>
+                                    <input type="number" id="calc-bets" value="1000000" class="w-full p-2 border border-indigo-200 rounded text-right font-mono" oninput="calculateNGR()">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-500 font-bold uppercase">보너스 지출 비용</label>
+                                    <input type="number" id="calc-bonus" value="50000" class="w-full p-2 border border-indigo-200 rounded text-right font-mono" oninput="calculateNGR()">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-500 font-bold uppercase">세금 및 수수료</label>
+                                    <input type="number" id="calc-tax" value="150000" class="w-full p-2 border border-indigo-200 rounded text-right font-mono" oninput="calculateNGR()">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visualization -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex flex-col">
+                        <h4 class="text-center font-bold text-gray-700 mb-4">수익 구조 시각화 (Waterfall Chart)</h4>
+                        <div class="chart-container flex-1">
+                            <canvas id="ngrChart"></canvas>
+                        </div>
+                        <div class="mt-4 p-4 bg-gray-50 rounded-lg flex justify-between items-center">
+                            <div>
+                                <div class="text-xs text-gray-500">Gross (GGR)</div>
+                                <div id="res-ggr" class="text-lg font-bold text-gray-700">$40,000</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-gray-500">Net (NGR)</div>
+                                <div id="res-ngr" class="text-2xl font-bold text-green-600">$10,000</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        // 4. Regulation Section
+        const renderRegulation = () => {
+            return `
+                <header class="mb-10 animate-fade-in border-b border-gray-200 pb-6">
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">글로벌 규제 및 라이선스</h1>
+                    <div class="text-gray-600 text-lg leading-relaxed">
+                        <p>
+                            iGaming은 '신뢰(Trust)'를 파는 산업입니다. 
+                            적법한 라이선스(MGA, UKGC)가 없다면 은행 거래가 불가능하고, 유저들도 사이트를 신뢰하지 않습니다.
+                        </p>
+                    </div>
+                </header>
+
+                <!-- Regional Map/Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-10">
+                    ${reportData.market.regions.map(region => `
+                        <div class="bg-white p-5 rounded-xl shadow-sm border-t-4 hover:shadow-md transition-shadow" style="border-color: ${region.color}">
+                            <h3 class="font-bold text-gray-800 text-lg mb-1">${region.name}</h3>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs font-bold px-2 py-1 rounded bg-gray-100 text-gray-600 border border-gray-200">${region.status}</span>
+                                <span class="text-xl font-bold" style="color: ${region.color}">${region.share}%</span>
+                            </div>
+                            <p class="text-sm text-gray-500 leading-snug">${region.desc}</p>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6">주요 규제 기관 및 인증</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="font-bold text-indigo-700 mb-4 border-b pb-2 flex items-center">
+                                <i class="fa-solid fa-building-columns mr-2"></i> 규제 기관 (Regulators)
+                            </h4>
+                            <p class="text-sm text-gray-600 mb-4">사업 운영 허가권(License)을 발급하고 감시하는 정부 기관입니다.</p>
+                            <ul class="space-y-4">
+                                <li class="flex items-start bg-gray-50 p-3 rounded-lg">
+                                    <div class="min-w-[40px] pt-1"><i class="fa-solid fa-certificate text-amber-500 text-xl"></i></div>
+                                    <div>
+                                        <span class="font-bold block text-gray-800">UKGC (영국)</span>
+                                        <span class="text-sm text-gray-500">세계에서 가장 엄격한 '골드 스탠다드'. 플레이어 보호 규정이 매우 까다롭습니다.</span>
+                                    </div>
+                                </li>
+                                <li class="flex items-start bg-gray-50 p-3 rounded-lg">
+                                    <div class="min-w-[40px] pt-1"><i class="fa-solid fa-certificate text-blue-500 text-xl"></i></div>
+                                    <div>
+                                        <span class="font-bold block text-gray-800">MGA (몰타)</span>
+                                        <span class="text-sm text-gray-500">유럽 시장 진입의 관문. B2B(개발사)와 B2C(운영사) 라이선스를 모두 관장합니다.</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-indigo-700 mb-4 border-b pb-2 flex items-center">
+                                <i class="fa-solid fa-microscope mr-2"></i> 기술 감사 (Auditors)
+                            </h4>
+                            <p class="text-sm text-gray-600 mb-4">게임이 수학적으로 공정한지 소스코드를 검증하는 독립 연구소입니다.</p>
+                            <ul class="space-y-4">
+                                <li class="flex items-start bg-gray-50 p-3 rounded-lg">
+                                    <div class="min-w-[40px] pt-1"><i class="fa-solid fa-check-double text-green-600 text-xl"></i></div>
+                                    <div>
+                                        <span class="font-bold block text-gray-800">eCOGRA</span>
+                                        <span class="text-sm text-gray-500">RNG 공정성 테스트 및 RTP 검증. 인증 마크는 사이트의 신뢰도를 높입니다.</span>
+                                    </div>
+                                </li>
+                                <li class="flex items-start bg-gray-50 p-3 rounded-lg">
+                                    <div class="min-w-[40px] pt-1"><i class="fa-solid fa-flask text-green-600 text-xl"></i></div>
+                                    <div>
+                                        <span class="font-bold block text-gray-800">GLI (Gaming Labs Int.)</span>
+                                        <span class="text-sm text-gray-500">전 세계 대부분의 규제 기관이 인정하는 표준 기술 인증을 제공합니다.</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        // 5. Responsible Gaming Section (New)
+        const renderRG = () => {
+            return `
+                <header class="mb-10 animate-fade-in border-b border-gray-200 pb-6">
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">책임감 있는 게임 (Responsible Gaming)</h1>
+                    <div class="text-gray-600 text-lg leading-relaxed">
+                        <p>
+                            NSUSLAB에게 있어 Responsible Gaming(RG)은 단순한 규제 준수가 아닙니다. 
+                            <strong>"건전한 유저가 오래 즐기는 것"</strong>이 곧 회사의 지속 가능한 이익으로 연결된다는 핵심 경영 철학입니다.
+                        </p>
+                    </div>
+                </header>
+
+                <!-- Core Pillars Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-blue-500 hover:shadow-lg transition-shadow">
+                        <div class="text-3xl text-blue-500 mb-4"><i class="fa-solid fa-shield-virus"></i></div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">1. 예방 (Prevention)</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed">
+                            문제가 발생하기 전에 막습니다. 미성년자 차단(KYC) 및 유저 스스로 설정하는 한도 시스템을 제공합니다.
+                        </p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-indigo-500 hover:shadow-lg transition-shadow">
+                        <div class="text-3xl text-indigo-500 mb-4"><i class="fa-solid fa-radar"></i></div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">2. 탐지 (Detection)</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed">
+                            <strong>AI 기술</strong>을 활용하여 급격한 베팅 금액 증가, 장시간 플레이, 분노 베팅(Tilt) 패턴을 실시간으로 감지합니다.
+                        </p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-amber-500 hover:shadow-lg transition-shadow">
+                        <div class="text-3xl text-amber-500 mb-4"><i class="fa-solid fa-user-nurse"></i></div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">3. 개입 (Intervention)</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed">
+                            위험 신호가 감지되면 즉시 개입합니다. 팝업 경고(Reality Check)를 띄우거나, 강제 휴식 시간을 부여합니다.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- NSUSLAB Implementation & Business Case -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Technical Implementation -->
+                    <div class="bg-slate-50 border border-slate-200 p-8 rounded-xl">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i class="fa-solid fa-code text-indigo-600 mr-2"></i> 기술적 구현 (NSUSLAB Tech)
+                        </h3>
+                        <ul class="space-y-4">
+                            <li class="flex items-start">
+                                <div class="bg-white p-2 rounded shadow-sm mr-3 text-indigo-600"><i class="fa-solid fa-sliders"></i></div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800 text-sm">Pre-commitment Tools</h4>
+                                    <p class="text-xs text-gray-500">입금 한도, 손실 한도, 시간 한도를 설정하는 UI/UX 개발.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="bg-white p-2 rounded shadow-sm mr-3 text-indigo-600"><i class="fa-solid fa-clock"></i></div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800 text-sm">Reality Check</h4>
+                                    <p class="text-xs text-gray-500">"1시간 동안 게임 중입니다. 총 $50를 잃으셨습니다."라는 알림 팝업 시스템.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="bg-white p-2 rounded shadow-sm mr-3 text-indigo-600"><i class="fa-solid fa-ban"></i></div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800 text-sm">Self-Exclusion API</h4>
+                                    <p class="text-xs text-gray-500">유저 요청 시 즉시 모든 계정 접속을 차단하고 마케팅 발송을 중단하는 백엔드 로직.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Business Impact Chart -->
+                    <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm flex flex-col">
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">RG가 비즈니스에 미치는 영향</h3>
+                        <p class="text-xs text-gray-500 mb-4">보호받은 유저(Protected) vs 번아웃 유저(Burnout)의 LTV 비교</p>
+                        <div class="chart-container flex-1" style="height: 250px;">
+                            <canvas id="rgChart"></canvas>
+                        </div>
+                        <div class="mt-2 text-center text-xs text-gray-400">
+                            * RG 툴을 사용하는 유저가 단기 매출은 적지만, 장기적으로 훨씬 높은 가치를 창출합니다.
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        // 6. Future Section
+        const renderFuture = () => {
+            return `
+                <header class="mb-10 animate-fade-in border-b border-gray-200 pb-6">
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">미래 트렌드: AI와 블록체인</h1>
+                    <div class="text-gray-600 text-lg leading-relaxed">
+                        <p>
+                            iGaming의 미래는 <strong>'데이터(Data)'</strong>와 <strong>'투명성(Transparency)'</strong>에 있습니다.
+                            AI는 유저 경험을 개인화하고, 블록체인은 중앙 서버가 필요 없는 새로운 신뢰를 만듭니다.
+                        </p>
+                    </div>
+                </header>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                    <!-- AI Card -->
+                    <div class="group bg-gradient-to-br from-indigo-600 to-blue-700 rounded-2xl p-8 text-white shadow-xl transform transition hover:-translate-y-1">
+                        <div class="flex items-center mb-6">
+                            <div class="bg-white/20 p-3 rounded-lg mr-4">
+                                <i class="fa-solid fa-brain text-3xl text-white"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold">Artificial Intelligence</h2>
+                                <span class="text-blue-200 text-sm">Data-Driven Operation</span>
+                            </div>
+                        </div>
+                        <ul class="space-y-4">
+                            <li class="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/5">
+                                <div class="font-bold text-blue-100 mb-1"><i class="fa-solid fa-user-gear mr-2"></i>초개인화 (Hyper-Personalization)</div>
+                                <div class="text-sm text-blue-50/80">
+                                    모든 유저에게 똑같은 메인이 아닌, 유저 성향(VIP, Fish, Grinder)에 맞춰 게임과 배너를 실시간으로 바꿉니다.
+                                </div>
+                            </li>
+                            <li class="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/5">
+                                <div class="font-bold text-blue-100 mb-1"><i class="fa-solid fa-shield-heart mr-2"></i>책임감 있는 게임 (RG)</div>
+                                <div class="text-sm text-blue-50/80">
+                                    AI가 분노 베팅(Tilt) 패턴을 감지하여 강제 휴식을 제안합니다. 이는 규제 준수를 넘어 유저 보호를 위한 핵심 기술입니다.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Blockchain Card -->
+                    <div class="group bg-gradient-to-br from-slate-800 to-gray-900 rounded-2xl p-8 text-white shadow-xl transform transition hover:-translate-y-1">
+                        <div class="flex items-center mb-6">
+                            <div class="bg-white/20 p-3 rounded-lg mr-4">
+                                <i class="fa-solid fa-link text-3xl text-white"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold">Blockchain & Crypto</h2>
+                                <span class="text-gray-400 text-sm">Trustless System</span>
+                            </div>
+                        </div>
+                        <ul class="space-y-4">
+                            <li class="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/5">
+                                <div class="font-bold text-gray-200 mb-1"><i class="fa-solid fa-check-to-slot mr-2"></i>Provably Fair (증명 가능한 공정성)</div>
+                                <div class="text-sm text-gray-400">
+                                    "운영자를 믿으세요"가 아닙니다. 유저가 암호화 해시(Hash)값을 통해 게임 결과를 직접 검증할 수 있습니다.
+                                </div>
+                            </li>
+                            <li class="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/5">
+                                <div class="font-bold text-gray-200 mb-1"><i class="fa-brands fa-bitcoin mr-2"></i>Instant Payment</div>
+                                <div class="text-sm text-gray-400">
+                                    은행을 거치지 않는 즉각적인 입출금으로 글로벌 접근성을 획기적으로 높입니다.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Closing Statement for NSUSLAB -->
+                <div class="mt-8 bg-amber-50 border border-amber-200 p-8 rounded-2xl text-center">
+                    <h3 class="text-xl font-bold text-amber-900 mb-2">🚀 NSUSLAB KOREA의 미션</h3>
+                    <p class="text-amber-800 mb-4 max-w-2xl mx-auto">
+                        우리는 단순한 게임 개발사가 아닙니다. <br>
+                        <strong>대용량 트래픽 처리 기술, AI 보안, 그리고 공정한 RNG 수학</strong>을 통해
+                        전 세계 유저들에게 가장 신뢰받는 <span class="underline decoration-2 underline-offset-4">Tech Solution</span>을 공급합니다.
+                    </p>
+                    <button onclick="navigate('overview')" class="bg-amber-600 text-white px-6 py-2 rounded-full font-bold hover:bg-amber-700 transition shadow-lg">
+                        처음으로 돌아가기
+                    </button>
+                </div>
+            `;
+        };
+
+        // 7. Quiz Section (New)
+        const renderQuiz = () => {
+            const currentQ = reportData.quiz[currentState.quiz.currentQuestion];
+            const isFinished = currentState.quiz.currentQuestion >= reportData.quiz.length;
+
+            if (isFinished) {
+                const score = currentState.quiz.score;
+                const total = reportData.quiz.length;
+                let msg = "";
+                if(score === total) msg = "🏆 완벽합니다! iGaming 전문가시네요.";
+                else if(score >= 7) msg = "🎉 훌륭해요! 대부분의 개념을 잘 이해하셨습니다.";
+                else msg = "📚 조금 더 학습이 필요해 보입니다. 다시 도전해보세요!";
+
+                return `
+                    <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg border border-indigo-100 text-center animate-fade-in">
+                        <div class="text-6xl mb-4">🎓</div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">퀴즈 완료!</h2>
+                        <p class="text-gray-500 mb-6">수고하셨습니다. 최종 점수는...</p>
+                        
+                        <div class="text-5xl font-extrabold text-indigo-600 mb-6">
+                            ${score} / ${total}
+                        </div>
+                        <p class="text-lg font-medium text-gray-700 mb-8">${msg}</p>
+                        
+                        <button onclick="resetQuiz()" class="bg-indigo-600 text-white px-8 py-3 rounded-full font-bold hover:bg-indigo-700 transition shadow-lg">
+                            다시 풀기
+                        </button>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="max-w-3xl mx-auto animate-fade-in">
+                    <!-- Progress -->
+                    <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                        <span>Question ${currentState.quiz.currentQuestion + 1} of ${reportData.quiz.length}</span>
+                        <span class="font-bold text-indigo-600">Score: ${currentState.quiz.score}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mb-8">
+                        <div class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" style="width: ${((currentState.quiz.currentQuestion) / reportData.quiz.length) * 100}%"></div>
+                    </div>
+
+                    <!-- Question Card -->
+                    <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6 leading-relaxed">
+                            ${currentQ.q}
+                        </h3>
+                        
+                        <div class="space-y-3" id="quiz-options">
+                            ${currentQ.options.map((opt, idx) => `
+                                <button onclick="checkAnswer(${idx})" class="quiz-option w-full text-left p-4 rounded-lg border border-gray-200 font-medium text-gray-700 hover:shadow-md">
+                                    ${opt}
+                                </button>
+                            `).join('')}
+                        </div>
+
+                        <!-- Feedback Area (Hidden initially) -->
+                        <div id="quiz-feedback" class="hidden mt-6 p-4 rounded-lg bg-gray-50 border border-gray-200">
+                            <div id="feedback-title" class="font-bold text-lg mb-2"></div>
+                            <p id="feedback-text" class="text-sm text-gray-600"></p>
+                            <button onclick="nextQuestion()" class="mt-4 bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-700">
+                                다음 문제 <i class="fa-solid fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        // --- Logic Functions ---
+
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const isOpen = content.classList.contains('open');
+            if (isOpen) {
+                content.classList.remove('open');
+            } else {
+                content.classList.add('open');
+            }
+        }
+
+        function navigate(sectionId) {
+            currentState.activeSection = sectionId;
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            const activeNav = document.getElementById(`nav-${sectionId}`);
+            if(activeNav) activeNav.classList.add('active');
+
+            const contentArea = document.getElementById('content-area');
+            contentArea.innerHTML = ''; 
+
+            Object.values(currentState.charts).forEach(chart => chart.destroy());
+            currentState.charts = {};
+
+            switch(sectionId) {
+                case 'overview': contentArea.innerHTML = renderOverview(); initOverviewCharts(); break;
+                case 'tech': contentArea.innerHTML = renderTech(); initTechCharts(); break;
+                case 'business': contentArea.innerHTML = renderBusiness(); calculateNGR(); break;
+                case 'regulation': contentArea.innerHTML = renderRegulation(); break;
+                case 'rg': contentArea.innerHTML = renderRG(); initRGChart(); break;
+                case 'future': contentArea.innerHTML = renderFuture(); break;
+                case 'quiz': contentArea.innerHTML = renderQuiz(); break;
+            }
+
+            const mobileMenu = document.getElementById('mobile-menu');
+            if(!mobileMenu.classList.contains('hidden')) toggleMobileMenu();
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+            const list = document.getElementById('mobile-nav-list');
+            if(list.innerHTML === '') {
+                list.innerHTML = document.querySelector('nav ul').innerHTML;
+                list.querySelectorAll('button').forEach(btn => {
+                    const id = btn.id.replace('nav-', '');
+                    btn.onclick = () => navigate(id);
+                });
+            }
+        }
+
+        // --- Quiz Logic ---
+        function checkAnswer(selectedIdx) {
+            const currentQ = reportData.quiz[currentState.quiz.currentQuestion];
+            const feedbackEl = document.getElementById('quiz-feedback');
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackText = document.getElementById('feedback-text');
+            const optionsDiv = document.getElementById('quiz-options');
+            
+            // Disable all buttons
+            const buttons = optionsDiv.querySelectorAll('button');
+            buttons.forEach(btn => btn.disabled = true);
+
+            if (selectedIdx === currentQ.correct) {
+                currentState.quiz.score++;
+                buttons[selectedIdx].classList.add('correct');
+                feedbackTitle.innerHTML = '<span class="text-green-600"><i class="fa-solid fa-check-circle mr-2"></i>정답입니다!</span>';
+                feedbackEl.classList.add('bg-green-50', 'border-green-200');
+            } else {
+                buttons[selectedIdx].classList.add('wrong');
+                buttons[currentQ.correct].classList.add('correct'); // Show correct answer
+                feedbackTitle.innerHTML = '<span class="text-red-600"><i class="fa-solid fa-times-circle mr-2"></i>오답입니다.</span>';
+                feedbackEl.classList.add('bg-red-50', 'border-red-200');
+            }
+
+            feedbackText.innerText = currentQ.rationale;
+            feedbackEl.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentState.quiz.currentQuestion++;
+            const contentArea = document.getElementById('content-area');
+            contentArea.innerHTML = renderQuiz();
+        }
+
+        function resetQuiz() {
+            currentState.quiz.currentQuestion = 0;
+            currentState.quiz.score = 0;
+            const contentArea = document.getElementById('content-area');
+            contentArea.innerHTML = renderQuiz();
+        }
+
+        // --- Charts & Simulation Logic ---
+
+        function initOverviewCharts() {
+            const ctxGrowth = document.getElementById('growthChart').getContext('2d');
+            currentState.charts.growth = new Chart(ctxGrowth, {
+                type: 'bar',
+                data: {
+                    labels: reportData.market.growth.labels,
+                    datasets: [{
+                        label: '시장 규모 (억 달러)',
+                        data: reportData.market.growth.data,
+                        backgroundColor: '#4f46e5',
+                        borderRadius: 6
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+
+            const ctxVertical = document.getElementById('verticalChart').getContext('2d');
+            currentState.charts.vertical = new Chart(ctxVertical, {
+                type: 'doughnut',
+                data: {
+                    labels: reportData.market.verticals.labels,
+                    datasets: [{
+                        data: reportData.market.verticals.data,
+                        backgroundColor: ['#4f46e5', '#f59e0b', '#94a3b8'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom' } } }
+            });
+        }
+
+        function initTechCharts() {
+            const ctxSim = document.getElementById('simChart').getContext('2d');
+            currentState.charts.sim = new Chart(ctxSim, {
+                type: 'line',
+                data: {
+                    labels: ['Start'],
+                    datasets: [{
+                        label: '플레이어 잔액 ($)',
+                        data: [1000],
+                        borderColor: '#4f46e5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 0,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { 
+                        y: { 
+                            suggestedMin: 0, 
+                            suggestedMax: 1500,
+                            grid: { color: '#f1f5f9' }
+                        },
+                        x: { display: false }
+                    },
+                    plugins: { legend: { display: false } },
+                    animation: { duration: 0 }
+                }
+            });
+        }
+
+        function runSimulation(rounds) {
+            const chart = currentState.charts.sim;
+            let currentData = chart.data.datasets[0].data;
+            let labels = chart.data.labels;
+            let balance = currentData[currentData.length - 1];
+            
+            // Simulation Parameters
+            const betSize = 10;
+            const rtp = 0.96; 
+            const hitFreq = 0.30; // 30% chance to win something (Medium Volatility)
+            
+            // Reset message if visible
+            document.getElementById('sim-message').classList.add('hidden');
+
+            // If already game over
+            if (balance <= 0) {
+                document.getElementById('sim-message').classList.remove('hidden');
+                return;
+            }
+
+            for(let i=0; i<rounds; i++) {
+                if(balance <= 0) break; // Stop loop if broke
+
+                balance -= betSize;
+                currentState.simulation.spins++;
+                
+                // RNG Logic with Volatility
+                if(Math.random() < hitFreq) { 
+                    // To maintain 96% RTP with 30% hit freq, avg win must be ~3.2x bet
+                    // We use a randomized multiplier to simulate volatility
+                    // Some small wins (0.5x), some big wins (10x)
+                    const rand = Math.random();
+                    let winMult = 0;
+
+                    if (rand < 0.6) winMult = 0.5 + Math.random(); // Small win (0.5x - 1.5x)
+                    else if (rand < 0.9) winMult = 2 + Math.random() * 3; // Medium win (2x - 5x)
+                    else winMult = 5 + Math.random() * 10; // Big win (5x - 15x)
+                    
+                    balance += (betSize * winMult); 
+                }
+            }
+
+            // Game Over Check
+            if (balance <= 0) {
+                balance = 0;
+                document.getElementById('sim-message').classList.remove('hidden');
+            }
+
+            labels.push(...Array(rounds).fill(''));
+            currentData.push(balance);
+            
+            // Limit data points for performance
+            if(currentData.length > 100) {
+                currentData.shift();
+                labels.shift();
+            }
+
+            chart.update();
+            document.getElementById('sim-balance').innerText = `$${Math.floor(balance).toLocaleString()}`;
+            document.getElementById('sim-spins').innerText = currentState.simulation.spins.toLocaleString();
+            
+            // Calculate actual RTP for this session
+            const totalBet = currentState.simulation.spins * betSize;
+            const totalWon = balance - 1000 + totalBet;
+            const currentRtp = totalBet > 0 ? ((totalWon / totalBet) * 100).toFixed(1) : 0;
+            document.getElementById('sim-rtp').innerText = `${currentRtp}%`;
+        }
+
+        function resetSimulation() {
+            currentState.simulation.spins = 0;
+            currentState.charts.sim.data.labels = ['Start'];
+            currentState.charts.sim.data.datasets[0].data = [1000];
+            currentState.charts.sim.update();
+            document.getElementById('sim-balance').innerText = `$1,000`;
+            document.getElementById('sim-spins').innerText = `0`;
+            document.getElementById('sim-rtp').innerText = `0%`;
+            document.getElementById('sim-message').classList.add('hidden');
+        }
+
+        // --- Business Logic ---
+        function calculateNGR() {
+            const bets = parseFloat(document.getElementById('calc-bets').value) || 0;
+            const bonus = parseFloat(document.getElementById('calc-bonus').value) || 0;
+            const tax = parseFloat(document.getElementById('calc-tax').value) || 0;
+
+            const payouts = bets * 0.96; // 96% RTP Fixed
+            const ggr = bets - payouts;
+            const ngr = ggr - bonus - tax;
+
+            document.getElementById('res-ggr').innerText = `$${ggr.toLocaleString()}`;
+            document.getElementById('res-ngr').innerText = `$${ngr.toLocaleString()}`;
+
+            const ctxNgr = document.getElementById('ngrChart').getContext('2d');
+            const chartData = {
+                labels: ['총 베팅', '당첨금 지급', 'GGR(매출)', '보너스/세금', 'NGR(순수익)'],
+                datasets: [{
+                    label: '금액 흐름',
+                    data: [bets, -payouts, ggr, -(bonus + tax), ngr],
+                    backgroundColor: [
+                        '#94a3b8', 
+                        '#ef4444', 
+                        '#3b82f6', 
+                        '#f59e0b', 
+                        '#22c55e'
+                    ],
+                    borderRadius: 4
+                }]
+            };
+
+            if(currentState.charts.ngr) {
+                currentState.charts.ngr.data = chartData;
+                currentState.charts.ngr.update();
+            } else {
+                currentState.charts.ngr = new Chart(ctxNgr, {
+                    type: 'bar',
+                    data: chartData,
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                });
+            }
+        }
+
+        // --- RG Chart ---
+        function initRGChart() {
+            const ctxRG = document.getElementById('rgChart').getContext('2d');
+            currentState.charts.rg = new Chart(ctxRG, {
+                type: 'line',
+                data: {
+                    labels: ['1개월', '3개월', '6개월', '12개월', '24개월'],
+                    datasets: [
+                        {
+                            label: 'Protected User (RG Tool 사용)',
+                            data: [100, 280, 500, 950, 1800], // 꾸준히 상승
+                            borderColor: '#4f46e5',
+                            backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Burnout User (보호 없음)',
+                            data: [150, 200, 210, 210, 210], // 초반 높으나 이탈
+                            borderColor: '#ef4444',
+                            borderDash: [5, 5],
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        title: { display: true, text: '유저 생애 가치 (LTV) 누적 그래프' },
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => { navigate('overview'); });
+    </script>
+</body>
+</html>
